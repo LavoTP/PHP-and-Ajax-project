@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+	<head>
+		<meta charset="utf-8">
+		<title>Apartment Hunting</title>
+		<link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="./css/all.min.css">
+		<link rel="stylesheet" type="text/css" href="./css/style.css">
+		<script type="text/javascript" src="./js/jquery-3.4.1.min.js"></script>
+	</head>
+
+	<body>
+
+		<div class="container">
+			<div class="col-xs-6 col-xs-offset-3 text-center mt-3">
+				<h2>Search Database</h2>
+				<input class="form-control mt-4" style="width:50%; margin: auto 17em;" type="text" name="search" id="search" placeholder="Search apartments">
+				<hr>
+				<br>
+				<ul type="1" id="results" class="text-success text-left text-monospace h4" style="height:.5em;">
+				</ul>
+			</div>
+
+			<div class="row justify-content-end">
+				<div class="" style="width: 21em;border: none;border-radius: 5px; background-color: #ff00efbf;-webkit-transform: rotate(60deg);transform: rotate(-7deg);position: absolute;height: 9em;z-index: -1;right: 107px;">
+					</div>
+					<form name="form_apartment" id="add_apartment" action="add_apartment.php" style="margin-top:-1em;width: 20em;border: none;border-radius: 5px; background-color:#6800ffa3; padding: 1em;">
+						<div class="form-group">
+							<input class="form-control" id="name" type="text" name="name" placeholder="Apartment name">
+						</div>
+						<div class="form-group">
+							<input class="form-control" id="address" type="text" name="address" placeholder="Apartment address">
+						</div>
+						<input class="btn btn-primary btn-block" id="" type="submit" name="" value="Submit">
+					</form>
+			</div>
+
+			<hr>
+			<div class="row">
+				<table border="1" id="tableData" class="text-monospace table">
+					<thead>
+						<tr>
+							<td>Id</td>
+							<td>Apartment name</td>
+							<td>Apartment address</td>
+							<td>Edit</td>
+							<td>Delete</td>
+						</tr>
+					</thead>
+					<tbody id="apartment_results">
+						
+					</tbody>
+				</table>
+
+				<form id="update_form" class="form" style="display: none; position: relative; right: -1em; width: 20em;">
+					
+				</form>
+			</div>
+
+
+		</div>
+		<div class="mb-4">
+		</div>
+
+		<script type="text/javascript">
+			$(document).ready(function() {
+				//get_allData();
+				setInterval(function() {
+					get_allData();
+				}, 1000);
+
+				
+				//search data from database
+					$('#search').keyup(function() {
+						var search = $('#search').val();
+
+						$.ajax({
+							url:'search.php',
+							data:{search:search},
+							type: 'POST',
+							success: function(data) {
+								if (!data.error) {
+									$('#results').html(data);
+								}
+							}
+						});
+					});
+
+					//insert apartment name and address
+					$("#add_apartment").submit(function(e) {
+						e.preventDefault();
+						var postData = $(this).serialize();
+						var url = $(this).attr('action');
+
+						$.post(url, postData, function(data) {
+							$('#add_apartment')[0].reset();
+							get_allData();
+						});
+
+					});
+
+					//disply all data from Database
+					function get_allData() {
+						$('#loading').show();
+						$.ajax({
+							url:'viewData.php',
+							type:'GET',
+							catch:false,
+							success: function(data) {
+								if (!data.error) {
+									$('#loading').hide();
+									$('#apartment_results').html(data);
+								}
+							}
+						})
+					}
+
+			});
+		</script>
+
+	</body>
+</html>
